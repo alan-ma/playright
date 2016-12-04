@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>play right</title>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="js/script.js"></script>
+		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+		<meta charset="UTF-8">
+		<meta name="description" content="An application to aid play writers with formatting scripts (the right way). Built with HTML, CSS, JavaScript, and jQuery. Created during Cipher's Local Hack Day hackathon in December 2016.">
+		<meta name="keywords" content="HTML,CSS,JavaScript,jQuery">
+		<meta name="author" content="Camran Hansen, Amanda Plotnik, Casey Koh, Alan Ma">
+	</head>
+	<body>
+		<div id="intro">
+			<h1 id="title">
+				play right
+			</h1>
+			<form id="enterInfo">
+				<input id="inputTitle" type="text" placeholder="Title"/>
+	  			<textarea id="inputSynopsis" type="text" placeholder="Synopsis"></textarea> 
+	  			<input class="submit" id="submit" type="submit" value="start righting!"/>
+	  		</form>
+
+	  		<form id="enterChar">
+	  			<div class="col-md-2">
+	  				<input id="inputCharName" type="text" placeholder="Character Name"/>
+	  			</div>
+	  			<div class="col-md-9">
+	  				<textarea id="inputCharDescription" type="text" placeholder="Character Description"></textarea>
+	  			</div>
+				<div class="col-md-1">
+	  				<input class="submit" id = "charSubmit" type="submit" value="Add Character"/>
+	  			</div>
+	  		</form>
+
+	  		<div id="char" class="col-md-12"></div>
+		</div>
+		<div id="right">
+			<div class="col-md-2">
+				<nav id="toc"></nav>
+			</div>
+			<div class="container col-md-10">
+				<div id="script"></div>
+				<div id="addSection" class="col-md-12">
+					<form id="addAct" class="col-md-6">
+						<input class="submit" id="actbtn" type="submit" value="Add Act">
+					</form>
+					<form id="addScene" class="col-md-6">
+						<input class="submit" id="scenebtn" type="submit" value="Add Scene">
+					</form>
+				</div>
+				<form id="enterLine" class="col-md-12">
+					<div class="col-md-3">
+						<textarea id="inputName" type="text" placeholder="Name"></textarea>
+						<textarea id="inputDirection" type="text" placeholder="Stage Directions"></textarea>
+					</div>
+					<div class="col-md-8">
+						<textarea id="inputText" type="text" placeholder="Line; use # to start and end #stage directions#."></textarea>
+					</div>
+					<div class="col-md-1">
+						<input class="submit" type="submit" id="submitLine"/>
+					</div>
+				</form>
+			</div>
+			<form id="deleteData"><input id="deleteButton" type="submit" value="Delete Play"/></form>
+		</div>
+	</body>
+</html>
