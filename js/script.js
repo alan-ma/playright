@@ -7,6 +7,8 @@ var play_synopsis = "";
 var numChar = 0;
 var characters = [];
 var writing = false;
+var editing = false;
+var elementNum = -1;
 
 function store() {
 	localStorage.play_title = play_title;
@@ -32,13 +34,14 @@ function load() {
 		$("#script").append("<ul><li class='character'>"+characters[i][0]+" - "+characters[i][1]+"</li></ul>");
 	}
 	for(i=0; i<play.length; i++) {
+		elementNum += 1;
 		if (play[i] == "!act!") {
-			addAct();
+			addAct(elementNum);
 		} else if (play[i] == "!scene!") {
-			addScene();
+			addScene(elementNum);
 		}
 		else {
-			addLine(play[i][0], play[i][1], play[i][2]);
+			addLine(play[i][0], play[i][1], play[i][2], elementNum);
 		}
 	}
 }
@@ -46,11 +49,12 @@ function update() {
 	store();
 	var objDiv = document.getElementById("script");
 	objDiv.scrollTop = objDiv.scrollHeight;
+	submit();
 }
 function scrollTo(element) {
 	$("#script").scrollTop($("#script").scrollTop() + $("#"+element).position().top);
 }
-function addLine(name, direction, text) {
+function addLine(name, direction, text, eNum) {
 	line += 1; //increment line number
 	var id = 'a'+act.toString()+'s'+scene.toString()+'l'+line.toString(); //id name
 	var directions = 0;
@@ -69,16 +73,16 @@ function addLine(name, direction, text) {
 	if (name != "") {
 		$("#script").append('<table class="line" id="'+id+'"><tr></tr></table>'); //add line div
 		if (direction != "") {
-			$("#"+id).append('<td class="nameHolder"><span class="name">'+name+'</span> <span class="direction"> ('+direction+')</span></td>');
+			$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span> <span class="direction edit"> ('+direction+')</span></td>');
 		} else {
-			$("#"+id).append('<td class="nameHolder"><span class="name">'+name+'</span></td>');
+			$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span></td>');
 		}
-		$("#"+id).append('<td class="text">'+text+'</td>');
+		$("#"+id).append('<td class="text edit">'+text+'</td>');
 	} else {
-		$("#script").append('<div class="stageDirection" id="'+id+'">'+text+'</div>');
+		$("#script").append('<div class="stageDirection edit" id="'+id+'">'+text+'</div>');
 	}
 }
-function addAct() {
+function addAct(eNum) {
 	act += 1;
 	scene = 0;
 	line = 0;
@@ -87,7 +91,7 @@ function addAct() {
 	$("#script").append("<h1 class='act' id=\""+act_id+"\">"+act_content+"</h1>");
 	$("#toc").append('<button class="heading" onclick="scrollTo(\''+act_id+'\')">'+act_content+'</button>');
 }
-function addScene() {
+function addScene(eNum) {
 	scene += 1;
 	line = 0;
 	var scene_content = "Scene "+scene.toString();
@@ -121,13 +125,13 @@ function submit() {
 		if (name != "") {
 			$("#script").append('<table class="line" id="'+id+'"><tr></tr></table>'); //add line div
 			if (direction != "") {
-				$("#"+id).append('<td class="nameHolder"><span class="name">'+name+'</span> <span class="direction"> ('+direction+')</span></td>');
+				$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span> <span class="direction edit"> ('+direction+')</span></td>');
 			} else {
-				$("#"+id).append('<td class="nameHolder"><span class="name">'+name+'</span></td>');
+				$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span></td>');
 			}
-			$("#"+id).append('<td class="text">'+text+'</td>');
+			$("#"+id).append('<td class="text edit">'+text+'</td>');
 		} else {
-			$("#script").append('<div class="stageDirection" id="'+id+'">'+text+'</div>');
+			$("#script").append('<div class="stageDirection edit" id="'+id+'">'+text+'</div>');
 		}
 		play.push([name, direction, text]);
 		update();
@@ -183,6 +187,8 @@ function submit() {
 			$("#char").append("<p><b>"+charName+":</b> "+charDescription+"</p>");
 			characters.push([charName, charDescription]);
 			numChar += 1;
+			$inputCharName.val("");
+			$inputCharDescription.val("");
 		}
 		return false;
 	});
@@ -192,6 +198,41 @@ function submit() {
 			location.reload();
 		}
 		return false;
+	});
+	$('#edit').submit(function(event) {
+		if (editing) {
+			alert("You have exited editing mode.");
+			editing = false;
+			$("#edit").css("background-color", "#AAFF9F");
+			document.editForm.editInput.value = "Edit Mode: Off";
+		} else {
+			alert("You are now in editing mode. Click on any element in the script to edit it.");
+			editing = true;
+			$("#edit").css("background-color", "#77FF48");
+			document.editForm.editInput.value = "Edit Mode: On";
+		}
+		return false;
+	});
+	$(".edit").click(function(event) {
+	  	if (editing) {
+	  		var old_text = $(event.target).text();
+	  		var new_text = prompt("Edit your text:", old_text);
+	  		if (new_text != null) {
+	  			$(event.target).text(new_text);
+	  		}	  		
+	  	}
+	});
+	$(".edit").mouseenter(function() {
+		if (editing) {
+			$(this).css("border", "1px solid #000");
+			$(this).css("cursor", "text");
+		}			
+	});
+	$(".edit").mouseleave(function() {
+		if (editing) {
+			$(this).css("border", "none");
+			$(this).css("cursor", "auto");
+		}			
 	});
 }
 
