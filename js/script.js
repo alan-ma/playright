@@ -49,7 +49,7 @@ function update() {
 	store();
 	var objDiv = document.getElementById("script");
 	objDiv.scrollTop = objDiv.scrollHeight;
-	submit();
+	edit();
 }
 function scrollTo(element) {
 	$("#script").scrollTop($("#script").scrollTop() + $("#"+element).position().top);
@@ -213,6 +213,8 @@ function submit() {
 		}
 		return false;
 	});
+}
+function edit() {
 	$(".edit").click(function(event) {
 	  	if (editing) {
 	  		var old_text = $(event.target).text();
@@ -245,5 +247,6 @@ function main() {
 		$("#intro").css("display", "none");
 	}
     submit();
+    edit();
 }
 $(document).ready(main);
