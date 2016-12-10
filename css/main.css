@@ -116,10 +116,13 @@ textarea {
 }
 #toc {
   padding-top: 40px;
+  height: 80vh;
+  overflow: scroll;
+  background: linear-gradient(#fff 97%, #aaa 100%);
 }
 .heading {
   width: 100%;
-  background-color: #FFF;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   text-align: left;
   font-family: courier, monospace;
@@ -128,7 +131,7 @@ textarea {
 .subheading {
   width: 80%;
   margin-left: 20%;
-  background-color: #FFF;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   text-align: left;
   font-family: courier, monospace;
@@ -212,7 +215,7 @@ textarea {
   position: absolute;
   left: 0;
   bottom: 50px;
-  background-color: #AAFF9F;
+  background-color: #B8FCBA;
   font-family: courier, monospace;
   margin: 20px;
   padding: 5px;

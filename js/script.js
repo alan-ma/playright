@@ -34,7 +34,6 @@ function load() {
 		$("#script").append("<ul><li class='character'>"+characters[i][0]+" - "+characters[i][1]+"</li></ul>");
 	}
 	for(i=0; i<play.length; i++) {
-		elementNum += 1;
 		if (play[i] == "!act!") {
 			addAct(elementNum);
 		} else if (play[i] == "!scene!") {
@@ -49,40 +48,28 @@ function update() {
 	store();
 	var objDiv = document.getElementById("script");
 	objDiv.scrollTop = objDiv.scrollHeight;
-	edit();
 }
 function scrollTo(element) {
 	$("#script").scrollTop($("#script").scrollTop() + $("#"+element).position().top);
 }
 function addLine(name, direction, text, eNum) {
+	elementNum += 1;
 	line += 1; //increment line number
 	var id = 'a'+act.toString()+'s'+scene.toString()+'l'+line.toString(); //id name
-	var directions = 0;
-	for (var i = 0, len = text.length; i < len; i++) {
-		if (text[i] == "#") {
-			directions += 1
-			if (directions % 2 == 1) {
-				text = [text.slice(0, i), "<i>(", text.slice(i+1)].join('');
-				len += 3;
-			} else {
-				text = [text.slice(0, i), ")</i>", text.slice(i+1)].join('');
-				len += 4;
-			}
-		}
-	}
 	if (name != "") {
-		$("#script").append('<table class="line" id="'+id+'"><tr></tr></table>'); //add line div
+		$("#script").append('<table class="line" data-element="'+elementNum+'" id="'+id+'"></table>'); //add line div
 		if (direction != "") {
-			$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span> <span class="direction edit"> ('+direction+')</span></td>');
+			$("#"+id).append('<td class="nameHolder"><span class="name edit" data-element="'+elementNum+'">'+name+'</span> <span class="direction edit" data-element="'+elementNum+'"> ('+direction+')</span></td>');
 		} else {
-			$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span></td>');
+			$("#"+id).append('<td class="nameHolder"><span class="name edit" data-element="'+elementNum+'">'+name+'</span></td>');
 		}
-		$("#"+id).append('<td class="text edit">'+text+'</td>');
+		$("#"+id).append('<td class="text edit" data-element="'+elementNum+'">'+text+'</td>');
 	} else {
-		$("#script").append('<div class="stageDirection edit" id="'+id+'">'+text+'</div>');
+		$("#script").append('<div class="stageDirection edit"  data-element="'+elementNum+'" id="'+id+'">'+text+'</div>');
 	}
 }
 function addAct(eNum) {
+	elementNum += 1;
 	act += 1;
 	scene = 0;
 	line = 0;
@@ -92,6 +79,7 @@ function addAct(eNum) {
 	$("#toc").append('<button class="heading" onclick="scrollTo(\''+act_id+'\')">'+act_content+'</button>');
 }
 function addScene(eNum) {
+	elementNum += 1;
 	scene += 1;
 	line = 0;
 	var scene_content = "Scene "+scene.toString();
@@ -101,6 +89,7 @@ function addScene(eNum) {
 }
 function submit() {
 	$('#enterLine').submit(function(event) {
+		elementNum += 1;
 		var $inputName = $(event.target).find('#inputName'); //get the name element from the input box
 		var name = $inputName.val(); //get the text from the name element
 		var $inputDirection = $(event.target).find('#inputDirection'); //get the direction element from the input box
@@ -123,24 +112,28 @@ function submit() {
 			}
 		}
 		if (name != "") {
-			$("#script").append('<table class="line" id="'+id+'"><tr></tr></table>'); //add line div
+			$("#script").append('<table class="line" data-element="'+elementNum+'" id="'+id+'"><tr></tr></table>'); //add line div
 			if (direction != "") {
-				$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span> <span class="direction edit"> ('+direction+')</span></td>');
+				$("#"+id).append('<td class="nameHolder"><span class="name edit" data-element="'+elementNum+'">'+name+'</span> <span class="direction edit" data-element="'+elementNum+'"> ('+direction+')</span></td>');
 			} else {
-				$("#"+id).append('<td class="nameHolder"><span class="name edit">'+name+'</span></td>');
+				$("#"+id).append('<td class="nameHolder"><span class="name edit" data-element="'+elementNum+'">'+name+'</span></td>');
 			}
-			$("#"+id).append('<td class="text edit">'+text+'</td>');
+			$("#"+id).append('<td class="text edit" data-element="'+elementNum+'">'+text+'</td>');
 		} else {
-			$("#script").append('<div class="stageDirection edit" id="'+id+'">'+text+'</div>');
+			$("#script").append('<div class="stageDirection edit" data-element="'+elementNum+'" id="'+id+'">'+text+'</div>');
 		}
 		play.push([name, direction, text]);
 		update();
+		$inputName.val("");
+		$inputDirection.val("");
+		$inputText.val("");
 		return false;
 	});
 	$('#addAct').submit(function(event) {
 		act += 1;
 		scene = 0;
 		line = 0;
+		elementNum += 1;
 		var act_content = "Act "+act.toString();
 		var act_id = "act"+act.toString();
 		$("#script").append("<h1 class='act' id=\""+act_id+"\">"+act_content+"</h1>");
@@ -152,6 +145,7 @@ function submit() {
 	$('#addScene').submit(function(event) {
 		scene += 1;
 		line = 0;
+		elementNum += 1;
 		var scene_content = "Scene "+scene.toString();
 		var scene_id = "scene"+act.toString()+"-"+scene.toString();
 		$("#script").append("<h2 class='scene' id=\""+scene_id+"\">"+scene_content+"</h2>");
@@ -203,7 +197,7 @@ function submit() {
 		if (editing) {
 			alert("You have exited editing mode.");
 			editing = false;
-			$("#edit").css("background-color", "#AAFF9F");
+			$("#edit").css("background-color", "#B8FCBA");
 			document.editForm.editInput.value = "Edit Mode: Off";
 		} else {
 			alert("You are now in editing mode. Click on any element in the script to edit it.");
@@ -215,26 +209,45 @@ function submit() {
 	});
 }
 function edit() {
-	$(".edit").click(function(event) {
-	  	if (editing) {
-	  		var old_text = $(event.target).text();
-	  		var new_text = prompt("Edit your text:", old_text);
-	  		if (new_text != null) {
-	  			$(event.target).text(new_text);
+	$('#script').on('click', '.edit', function() {
+	    if (editing) {
+	  		var old_text = $(this).text();
+	  		if ($(this).hasClass("direction")) {
+	  			var new_text = prompt("Edit your text (no brackets necessary):", old_text);
+	  		} else {
+	  			var new_text = prompt("Edit your text:", old_text);
 	  		}	  		
+	  		if (new_text != null) {
+	  			if ($(this).hasClass("direction")) {
+	  				$(this).text("("+new_text+")");
+	  			} else {
+	  				$(this).text(new_text);
+	  			}
+	  		}
+	  		//update play array
+	  		var element_number = parseInt($(this).attr("data-element"));
+	  		if ($(this).hasClass("name")) {
+	  			play[element_number][0] = new_text;
+	  		} else if ($(this).hasClass("direction")) {
+	  			play[element_number][1] = new_text;
+	  		} else {
+	  			play[element_number][2] = new_text;
+	  		}
+	  		localStorage.play = JSON.stringify(play);
+	  		console.log("Edit saved.")
 	  	}
 	});
-	$(".edit").mouseenter(function() {
-		if (editing) {
+	$('#script').on('mouseenter', '.edit', function() {
+	    if (editing) {
 			$(this).css("border", "1px solid #000");
 			$(this).css("cursor", "text");
-		}			
+		}
 	});
-	$(".edit").mouseleave(function() {
-		if (editing) {
+	$('#script').on('mouseleave', '.edit', function() {
+	    if (editing) {
 			$(this).css("border", "none");
 			$(this).css("cursor", "auto");
-		}			
+		}
 	});
 }
 
